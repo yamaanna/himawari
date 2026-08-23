@@ -1443,22 +1443,27 @@ body {
 function updateNavHighlight() {
     if (!sidebar || categoryBlocks.length === 0) return;
 
-    const scrollPos = window.scrollY;
-    // 顶部固定栏高度，和跳转偏移量保持一致
-    const headerHeight = config.scrollOffset;
-    let currentCate = '';
+    let maxVisibleHeight = 0;
+    let activeIndex = 0;
 
-    // 遍历所有区块：滚动位置超过区块顶部判定线，就标记为当前分类
-    categoryBlocks.forEach(block => {
-        // -50 是提前量，让标题刚进入视线就高亮，体验更贴合
-        if (scrollPos >= block.offsetTop - headerHeight ) {
-            currentCate = block.id.replace('cate-', '');
+    // 遍历所有分类区块，计算每个区块在视口内的可见高度
+    categoryBlocks.forEach((block, index) => {
+        const rect = block.getBoundingClientRect();
+        // 计算区块与视口的交集高度（即可见部分的高度）
+        const visibleTop = Math.max(0, rect.top);
+        const visibleBottom = Math.min(window.innerHeight, rect.bottom);
+        const visibleHeight = visibleBottom - visibleTop;
+
+        // 可见高度更大的区块，成为当前激活项
+        if (visibleHeight > maxVisibleHeight) {
+            maxVisibleHeight = visibleHeight;
+            activeIndex = index;
         }
     });
 
-    // 统一更新导航高亮状态
-    navItems.forEach(item => {
-        item.classList.toggle(config.navActiveClass, item.dataset.cate === currentCate);
+    // 统一更新导航高亮
+    navItems.forEach((item, index) => {
+        item.classList.toggle(config.navActiveClass, index === activeIndex);
     });
 }
 
