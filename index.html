@@ -1446,26 +1446,28 @@ function updateNavHighlight() {
     const scrollPos = window.scrollY;
     const headerHeight = config.scrollOffset;
     const viewportHeight = window.innerHeight;
-    // 底部提前量：区块顶部进入视口底部上方约 80px 时，就认为进入当前阅读区域
-    const bottomOffset = 80;
-    // 判定线：文档坐标中，视口底部向上偏移 headerHeight + bottomOffset 的位置
-    const activeLine = scrollPos + viewportHeight - headerHeight - bottomOffset;
+    // 阅读焦点线在视口中的位置比例：0.4 表示视口顶部下方 40% 处
+    // 数值越小，切换越早；数值越大，切换越晚。可根据实际体验微调。
+    const focusLineRatio = 0.4;
+    // 计算焦点线在文档中的绝对位置（视口顶部 + 固定栏高度 + 视口高度 * 比例）
+    const focusLine = scrollPos + headerHeight + viewportHeight * focusLineRatio;
     let currentCate = '';
 
-    // 遍历所有区块：区块顶部越过“底部判定线”就标记为当前分类
+    // 遍历所有区块：找到最后一个区块顶部不超过焦点线的区块，即当前阅读区块
     categoryBlocks.forEach(block => {
-        if (activeLine >= block.offsetTop) {
+        if (focusLine >= block.offsetTop) {
             currentCate = block.id.replace('cate-', '');
         }
     });
 
     // 触底兜底：如果已经滚到页面最底部，直接高亮最后一个区块，
-    // 避免最后区块高度过小导致判定线仍然够不到
+    // 避免极端情况下（如最后一个区块高度极小）焦点线仍无法覆盖
     const maxScrollPos = Math.max(0, document.documentElement.scrollHeight - viewportHeight);
     if (scrollPos >= maxScrollPos - 1 && categoryBlocks.length > 0) {
         currentCate = categoryBlocks[categoryBlocks.length - 1].id.replace('cate-', '');
     }
 
+    // 统一更新导航高亮状态
     navItems.forEach(item => {
         item.classList.toggle(config.navActiveClass, item.dataset.cate === currentCate);
     });
