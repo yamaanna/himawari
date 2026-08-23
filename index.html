@@ -1451,7 +1451,7 @@ function updateNavHighlight() {
     // 遍历所有区块：滚动位置超过区块顶部判定线，就标记为当前分类
     categoryBlocks.forEach(block => {
         // -50 是提前量，让标题刚进入视线就高亮，体验更贴合
-        if (scrollPos >= block.offsetTop - headerHeight - 50) {
+        if (scrollPos >= block.offsetTop - headerHeight ) {
             currentCate = block.id.replace('cate-', '');
         }
     });
