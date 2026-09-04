@@ -132,17 +132,24 @@ body {
     min-width: 0;
 }
 .soft-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 20px;
-    font-weight: 500;
-    flex-shrink: 0;
-}
+     width: 42px;
+     height: 42px;
+     border-radius: 8px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     color: #fff;
+     font-size: 20px;
+     font-weight: 500;
+     flex-shrink: 0;
+     overflow: hidden; /* 关键：超出容器的部分全部裁掉 */
+ }
+.soft-icon img {
+     width: 100%;
+     height: 100%;
+     object-fit: contain; /* 等比例完整显示图标，不变形、不裁切 */
+     display: block;
+ }
 .soft-name {
     font-size: 15px;
     font-weight: 500;
